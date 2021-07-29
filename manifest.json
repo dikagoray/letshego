@@ -1,0 +1,10 @@
+{
+	"name": "Letshegodemo",
+	"short_name": "Letshegodemo",
+	"description": "Phone Directory",
+	"start_url": ".",
+	"display": "For Interview Purpose",
+	"orientation": "portrait",
+	"theme_color": "#343A40",
+	"background_color": "#343A40"
+}

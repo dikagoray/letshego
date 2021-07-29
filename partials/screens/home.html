@@ -1,0 +1,180 @@
+<template>
+	<div class="page no-swipeback">
+
+		<div class="navbar">
+			<div class="navbar-inner">
+				{{#js_if "app.data.config.theme.navigation == 'hamburger'"}}
+				<div class="left">
+					<a href="#" class="link icon-only panel-open" data-panel="left">
+						<i class="hamburger hamburger--boring">
+							<span class="hamburger-box">
+								<span class="hamburger-inner"></span>
+							</span>
+						</i>
+					</a>
+				</div>
+				{{/js_if}}
+				<div class="title">
+				NY Times Most Popular
+				</div>
+				<div class="right">
+					<a href="#" class="link icon-only" >
+						<span class="fas  fa-stack-1x fa-search"></span>
+					</a>
+					<a href="#" class="link icon-only" >
+						<span class="fas  fa-stack-1x fa-ellipsis-v"></span>
+					</a>
+					
+				</div>
+				
+			</div>
+		</div>
+
+		<div class="page-content">
+
+			
+			 {{#if articles}}
+			 
+			 
+			 
+			 <div class="list list-contacts hairlines margin-vertical chevron">
+					
+					<div class="list-group">
+						<ul>
+							
+							 {{#each articles}}
+							<li>
+								<a href="{{this.url}}"  target="_blank" class="external item-link" >
+									<div class="item-content">
+										<div class="item-media">
+											<img src="img/logo.jpeg" style="border-radius:100%;" class="circle" width="40" alt="" />
+										</div>
+										<div class="item-inner">
+											<div class="item-title">{{this.title}}<br>
+											<small style="color:#ccc;">{{this.byline}}</small>
+											<small style="color:#ccc;"><i class="fa fa-calendar"></i> {{this.published_date}}</small> </div>
+											
+										</div>
+										
+									</div>
+								
+								</a>
+							</li>
+							{{/each}}
+						</ul>
+					</div>
+					{{/each}}
+				</div>
+			 
+    
+	
+      {{/if}}
+	
+
+			
+		</div>
+		
+	
+
+	</div>
+</template>
+
+<style scoped>
+.cards .card {
+		background-color: #292929;
+    background-position: center center;
+		background-repeat: no-repeat;
+		background-size: cover;
+		box-shadow: none;
+		color: #ccc;
+    display: flex;
+    height: 48vw;
+	}
+
+	.theme-dark {{this}} .cards .card {
+		background-color: #fff;
+	}
+
+  .card .card-content {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+</style>
+
+<script>
+
+return {
+		data: function() {
+			return {
+				articles: null
+			}
+		},
+		methods: {
+			showToolbar: function() {
+				var self = this;
+				setTimeout(function() {
+					self.$('.toolbar').removeClass('toolbar-hidden');
+				});
+			},
+			loadData: function() {
+			app.preloader.show();
+				var self = this;
+				
+				
+				
+  const url = "https://api.nytimes.com/svc/mostpopular/v2/shared/7.json?api-key=kzJBgJztDvNTipPYlUziso92a7ijtWit";
+  const options = {
+    method: "GET",
+    headers: {
+      "Accept": "application/json"
+    },
+  };
+  fetch(url, options).then(
+    response => {
+      if (response.ok) {
+        return response.text();
+      }
+      return response.text().then(err => {
+        return Promise.reject({
+          status: response.status,
+          statusText: response.statusText,
+          errorMessage: err,
+        });
+      });
+    })
+    .then(data => {
+
+     var obj = JSON.parse(data);
+    console.log(obj.results);
+		
+	  self.$setState({
+				articles: obj.results
+							});
+	app.preloader.hide();
+    })
+    .catch(err => {
+      console.error(err);
+	  app.toast.show({
+		text: 'No Internet Connection',
+		position: 'bottom',
+		cssClass: 'bg-color-red'
+	});
+    });
+
+
+				
+				
+			}
+			
+		},
+		on: {
+			pageInit: function() {
+				var self = this;
+				self.showToolbar();
+				self.loadData();
+			}
+		}
+	}
+</script>
